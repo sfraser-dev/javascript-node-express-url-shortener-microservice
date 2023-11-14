@@ -27,7 +27,6 @@ mongoose
     })
     .catch((err) => console.log(err.message));
 //--- end mongoose.
-
 // ME END
 
 // Basic Configuration
@@ -46,14 +45,41 @@ app.get("/", function (req, res) {
 app.post("/api/shorturl", function (req, res) {
     // log the body data from the form (gives... {url: www.test.com})
     console.log(req.body);
-    // grab the recived url
+    // grab the received url
     let receivedUrl = req.body.url;
-    // validate the recieved url using JS's in-built URL module
+
+    // validate the recieved url (correct format?) using JS's in-built URL module
+    let urlObject;
     try {
-        new URL(receivedUrl);
+        urlObject = new URL(receivedUrl);
+        console.log(urlObject);
     } catch {
-        res.json({ error: "received URL is invalid" });
+        res.json({ error: "invalid url" });
+        return;
     }
+
+    // use the dns module to see if the url exists
+    // dns lookup function is asynchronous, wrap in promise, producing code
+    const lookupPromise = new Promise(function (resolve, reject) {
+        // If domain exists, it'll return the address
+        dns.lookup(urlObject.hostname, function (err, address) {
+            if (err) reject(err);
+            resolve(address);
+        });
+    });
+    // consumer code (.then (resolved) and .catch (rejected))
+    let shortUrl = 101;
+    let longUrl;
+    lookupPromise
+        .then(function (promiseResolved) {
+            console.log(promiseResolved);
+            longUrl = urlObject.href;
+            res.json({ long_url: longUrl, short_url: shortUrl });
+        })
+        .catch(function (promiseRejected) {
+            console.log(promiseRejected);
+            res.json({ error: "invalid url" });
+        });
 });
 // ME END
 
