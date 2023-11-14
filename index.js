@@ -16,13 +16,16 @@ const dns = require("node:dns");
 //--- setup mongoose
 const mongoose = require("mongoose");
 // connect to MongoDB described in .env MONGO_URI without depricated warnings.
-mongoose.connect(process.env.MONGO_URI, {
-    dbName: process.env.DB_NAME,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => {
-    console.log("database connected.");
-}).catch((err) => console.log(err.message));
+mongoose
+    .connect(process.env.MONGO_URI, {
+        dbName: process.env.DB_NAME,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => {
+        console.log("database connected.");
+    })
+    .catch((err) => console.log(err.message));
 //--- end mongoose.
 
 // ME END
@@ -38,10 +41,21 @@ app.get("/", function (req, res) {
     res.sendFile(process.cwd() + "/views/index.html");
 });
 
+// ME START
 // Your first API endpoint
-app.get("/api/hello", function (req, res) {
-    res.json({ greeting: "hello API" });
+app.post("/api/shorturl", function (req, res) {
+    // log the body data from the form (gives... {url: www.test.com})
+    console.log(req.body);
+    // grab the recived url
+    let receivedUrl = req.body.url;
+    // validate the recieved url using JS's in-built URL module
+    try {
+        new URL(receivedUrl);
+    } catch {
+        res.json({ error: "received URL is invalid" });
+    }
 });
+// ME END
 
 app.listen(port, function () {
     console.log(`Listening on port ${port}`);
