@@ -15,6 +15,7 @@ const dns = require("node:dns");
 
 //--- setup mongoose
 const mongoose = require("mongoose");
+mongoose.Promise = require("bluebird");
 // connect to MongoDB described in .env MONGO_URI without depricated warnings.
 mongoose
     .connect(process.env.MONGO_URI, {
@@ -26,6 +27,15 @@ mongoose
         console.log("database connected.");
     })
     .catch((err) => console.log(err.message));
+// create mongoose schema, structure of document
+const urlSchema = new mongoose.Schema({
+    original_url: {
+        type: String,
+        required: true,
+    },
+});
+// create a model from the scheme to perform CRUD
+const Url = new mongoose.model("Url", urlSchema);
 //--- end mongoose.
 // ME END
 
@@ -43,41 +53,51 @@ app.get("/", function (req, res) {
 // ME START
 // Your first API endpoint
 app.post("/api/shorturl", function (req, res) {
-    // log the body data from the form (gives... {url: www.test.com})
-    console.log(req.body);
     // grab the received url
     let receivedUrl = req.body.url;
 
-    // validate the recieved url (correct format?) using JS's in-built URL module
+    // validate the recieved url from the form using JS's in-built URL module
     let urlObject;
     try {
         urlObject = new URL(receivedUrl);
-        console.log(urlObject);
     } catch {
         res.json({ error: "invalid url" });
         return;
     }
 
+    // promise producing code
     // use the dns module to see if the url exists
-    // dns lookup function is asynchronous, wrap in promise, producing code
-    const lookupPromise = new Promise(function (resolve, reject) {
+    // dns lookup function is asynchronous, wrap in promise 
+    const dnsLookupPromise = new Promise(function (resolve, reject) {
         // If domain exists, it'll return the address
         dns.lookup(urlObject.hostname, function (err, address) {
             if (err) reject(err);
             resolve(address);
         });
     });
-    // consumer code (.then (resolved) and .catch (rejected))
-    let shortUrl = 101;
-    let longUrl;
-    lookupPromise
-        .then(function (promiseResolved) {
-            console.log(promiseResolved);
-            longUrl = urlObject.href;
-            res.json({ long_url: longUrl, short_url: shortUrl });
+    // promise consuming code (.then (resolved) and .catch (rejected))
+    dnsLookupPromise
+        .then(function () {
+            let originalUrl = urlObject.href;
+            // checks complete (url validated and url exists)
+            // write to mongodb database ("Url" is the mongoose model)
+            const url = new Url({
+                original_url: originalUrl,
+            });
+            // mongoose save() returns a promise
+            const savePromise = url.save();
+            savePromise
+                .then(function () {
+                    // on successful save, use "_id" of the document for the short url
+                    res.json({
+                        original_url: originalUrl,
+                    });
+                })
+                .catch(function () {
+                    res.json({ error: "invalid url" });
+                });
         })
-        .catch(function (promiseRejected) {
-            console.log(promiseRejected);
+        .catch(function () {
             res.json({ error: "invalid url" });
         });
 });
