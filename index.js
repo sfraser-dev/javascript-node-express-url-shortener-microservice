@@ -111,17 +111,19 @@ app.post("/api/shorturl", function (req, res) {
 
 // get "short" route parameter from url
 app.get("/api/shorturl/:short", function (req, res) {
-    function getOriginalUrlFromShortUrl() {
-        // mongoose query find using "_id", limit to one result, execute (with callback function)
-        Url.findById(req.params.short)
-            .limit(1)
-            .exec((mongooseErr, mongooseRes) => {
-                if (mongooseErr) return console.error(mongooseErr);
-                console.log(mongooseRes);
-                res.redirect(mongooseRes.original_url);
-            });
-    }
-    getOriginalUrlFromShortUrl();
+    // mongoose query find "_id"
+    Url.findById(req.params.short)
+        // limit to one result
+        .limit(1)
+        // execute without a callback (returns a promise)
+        .exec()
+        .then((execRes) => {
+            console.log(execRes);
+            res.redirect(execRes.original_url);
+        })
+        .catch((execErr) => {
+            if (execErr) return console.error(execErr);
+        });
 });
 // ME END
 
