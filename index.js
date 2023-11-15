@@ -1,3 +1,5 @@
+"use strict";
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -16,7 +18,7 @@ const dns = require("node:dns");
 //--- setup mongoose
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
-// connect to MongoDB described in .env MONGO_URI without depricated warnings.
+// connect to mongodb described in .env MONGO_URI without depricated warnings
 mongoose
     .connect(process.env.MONGO_URI, {
         dbName: process.env.DB_NAME,
@@ -27,7 +29,7 @@ mongoose
         console.log("database connected.");
     })
     .catch((err) => console.log(err.message));
-// create mongoose schema, structure of document
+// create mongoose schema, structure / shape of document
 const urlSchema = new mongoose.Schema({
     original_url: {
         type: String,
@@ -35,7 +37,7 @@ const urlSchema = new mongoose.Schema({
     },
 });
 // create a model from the scheme to perform CRUD
-const Url = new mongoose.model("Url", urlSchema);
+const Url = mongoose.model("Url", urlSchema);
 //--- end mongoose.
 // ME END
 
@@ -67,7 +69,7 @@ app.post("/api/shorturl", function (req, res) {
 
     // promise producing code
     // use the dns module to see if the url exists
-    // dns lookup function is asynchronous, wrap in promise 
+    // dns lookup function is asynchronous, wrap in promise
     const dnsLookupPromise = new Promise(function (resolve, reject) {
         // If domain exists, it'll return the address
         dns.lookup(urlObject.hostname, function (err, address) {
@@ -84,13 +86,16 @@ app.post("/api/shorturl", function (req, res) {
             const url = new Url({
                 original_url: originalUrl,
             });
-            // mongoose save() returns a promise
+            // mongoose model's save() function returns a promise (if no callback passed as a function to it)
             const savePromise = url.save();
             savePromise
                 .then(function () {
-                    // on successful save, use "_id" of the document for the short url
+                    // on a successful save, "original_url" will be set and
+                    // a unique "_id" will be given to the document entry,
+                    // set this as the short_url for the microservice json output
                     res.json({
                         original_url: originalUrl,
+                        short_url: url._id,
                     });
                 })
                 .catch(function () {
