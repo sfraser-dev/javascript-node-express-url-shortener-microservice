@@ -16,7 +16,9 @@ app.use(middlewareParse);
 const dns = require("node:dns");
 
 //--- setup mongoose
+// reference mongoose
 const mongoose = require("mongoose");
+// use bluebird for mongoose promises
 mongoose.Promise = require("bluebird");
 // connect to mongodb described in .env MONGO_URI without depricated warnings
 mongoose
@@ -104,6 +106,18 @@ app.post("/api/shorturl", function (req, res) {
         })
         .catch(function () {
             res.json({ error: "invalid url" });
+        });
+});
+
+// get "short" route parameter from url
+app.get("/api/shorturl/:short", function (req, res) {
+    // mongoose query find using "_id", limit to one result, execute (with callback function)
+    Url.findById(req.params.short)
+        .limit(1)
+        .exec((mongooseErr, mongooseRes) => {
+            if (mongooseErr) return console.log(mongooseErr);
+            console.log(mongooseRes);
+            res.redirect(mongooseRes.original_url);
         });
 });
 // ME END
