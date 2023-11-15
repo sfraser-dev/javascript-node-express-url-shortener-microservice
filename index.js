@@ -30,7 +30,7 @@ mongoose
     .then(() => {
         console.log("database connected.");
     })
-    .catch((err) => console.log(err.message));
+    .catch((err) => console.error(err.message));
 // create mongoose schema, structure / shape of document
 const urlSchema = new mongoose.Schema({
     original_url: {
@@ -115,7 +115,7 @@ app.get("/api/shorturl/:short", function (req, res) {
     Url.findById(req.params.short)
         .limit(1)
         .exec((mongooseErr, mongooseRes) => {
-            if (mongooseErr) return console.log(mongooseErr);
+            if (mongooseErr) return console.error(mongooseErr);
             console.log(mongooseRes);
             res.redirect(mongooseRes.original_url);
         });
