@@ -4,3 +4,5 @@ This is the boilerplate code for the URL Shortener Microservice project. Instruc
 
 npm install
 npm run start
+
+Upload code to replit.com or glitch.com
