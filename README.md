@@ -1,6 +1,6 @@
 # URL Shortener Microservice
 
-Microservice that generates a short URL from an input URL. Short URL redirects to the input URL. Uses Node, Express and MongoDB. FCC final project.
+Microservice that generates a short URL from an input URL. Short URL redirects to the input URL. Uses Node, Express and MongoDB. FCC Backend API course final project.
 
 Instructions:
 
