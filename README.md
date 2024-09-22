@@ -1,8 +1,10 @@
 # URL Shortener Microservice
 
-This is the boilerplate code for the URL Shortener Microservice project. Instructions for building your project can be found at https://www.freecodecamp.org/learn/back-end-development-and-apis/back-end-development-and-apis-projects/url-shortener-microservice.
+Microservice that generates a short URL from an input URL. Short URL redirects to the input URL. Uses Node, Express and MongoDB. FCC final project.
 
-npm install
-npm run start
+Instructions:
 
-Upload code to replit.com or glitch.com
+- npm install
+- npm run start
+
+Upload code to replit.com or glitch.com for FCC verification.
