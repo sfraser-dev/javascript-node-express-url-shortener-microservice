@@ -9,6 +9,7 @@ Instructions:
 
 See this code in production:
 
-- <https://replit.com/@sfraser-dev/boilerplate-project-urlshortener>
-
-*Need to upload code to replit.com or glitch.com for FCC verification.*
+- Replit:
+    - <https://replit.com/@sfraser-dev/boilerplate-project-urlshortener>
+- Gitpod:
+    - <https://gitpod.io/#https://github.com/sfraser-dev/javascript-node-express-url-shortener-microservice>
