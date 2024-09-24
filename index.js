@@ -23,7 +23,7 @@ mongoose.Promise = require("bluebird");
 // connect to mongodb described in .env MONGO_URI without depricated warnings
 mongoose
     .connect(process.env.MONGO_URI, {
-        dbName: process.env.DB_NAME,
+        //dbName: process.env.DB_NAME,
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
