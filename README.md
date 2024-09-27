@@ -14,7 +14,7 @@ View:
 - Glitch:
     - <https://cyan-neighborly-windshield.glitch.me> 
 
-Instructions:
+Usage:
 
 - On the loaded (eg: "127.0.0.1:3000")
     - Input an URL (eg: "www.bbc.com") and press "POST URL"
