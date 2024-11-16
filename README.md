@@ -17,8 +17,8 @@ View:
 Usage:
 
 - On the loaded (eg: "127.0.0.1:3000")
-    - Input an URL (eg: "www.bbc.com") and press "POST URL"
+    - Input an URL (eg: "https://www.bbc.co.uk") and press "POST URL"
 - You'll be taken to page "127.0.0.1:3000/api/shorturl"
     - Copy the generated "short_url" value (eg: "777888999")
 - Navigate to page "127.0.0.1:3000/api/shorturl/777888999"
-    - You'll be redirected to "www.bbc.co.uk"
+    - You'll be redirected to "https://www.bbc.co.uk"
